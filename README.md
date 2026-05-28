@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/CWQzSJcp)
 # GPT2-SFT Assignment
 
 Use the provided SPEC.md file to build a full app for a post-trained GPT2 using any dataset of your choice. You need to add specifications to visualize intermediate states, and run inference on a local system. To get GPU for training, prepare all the codes locally on your system as .py files, upload to Kaggle, and use one kaggle notebook to just run the python training, download the trained checkpoint back to your system and continue. 
