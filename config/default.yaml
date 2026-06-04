@@ -1,0 +1,47 @@
+data:
+  dataset_name: "WutYee/HarryPotter_books_1to7"
+  dataset_url: "https://huggingface.co/datasets/WutYee/HarryPotter_books_1to7"
+  text_column: "text"
+  cache_dir: "./data/cache"
+  use_native_splits: true
+  train_split: "train"
+  validation_split: "validation"
+  test_split: "test"
+  seed: 42
+
+tokenizer:
+  name: "gpt2"
+  max_length: 512
+  stride: 128
+  padding: "max_length"
+
+model:
+  name: "gpt2"
+
+training:
+  output_dir: "./checkpoints"
+  epochs: 3
+  batch_size: 8
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-5
+  lr_scheduler: "cosine"
+  weight_decay: "default"
+  save_steps: 500
+  
+sampling:
+  max_new_tokens: 200
+  temperature: 1.0
+  top_k: 50
+  top_p: 0.95
+  repetition_penalty: 1.0
+  do_sample: true
+  seed: null
+
+visualization:
+  output_dir: "./visualization"
+  embeddings:
+    method: "umap"
+    most_frequent_tokens: 500
+  distributions:
+    top_n_tokens: 20
+    save_gif: true

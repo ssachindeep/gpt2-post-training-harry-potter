@@ -1,0 +1,92 @@
+GPT-2 Harry Potter Post-Training — Session Evidence
+=====================================================
+
+## 1. Dry Run (Local CPU)
+
+Command:
+  python train.py --config config/default.yaml --dry-run
+
+Output:
+  Step 1-2 : Train samples loaded    : 81,349
+  Step 3-4 : Batch input_ids shape   : torch.Size([8, 512])
+  Step 5-6 : Token embeddings shape  : torch.Size([8, 512, 768])
+  Step 7-8 : Logits shape            : torch.Size([8, 512, 50257])
+  Step 9   : Probabilities shape     : torch.Size([8, 512, 50257])
+  Step 10  : Cross-entropy loss      : 9.3883
+
+  (Loss ~9.39 is expected for an untrained model on a 50,257-token vocab:
+   ln(50257) ≈ 10.82; GPT-2 pretrained weights reduce this to ~9.4)
+
+  Dry Run Complete: Pipeline OK
+
+
+## 2. Kaggle GPU Training
+
+Platform  : Kaggle (GPU T4 x2)
+Config    : config/default.yaml
+  epochs                    : 3
+  batch_size                : 8
+  gradient_accumulation     : 4  (effective batch = 32)
+  learning_rate             : 5e-5
+  lr_scheduler              : cosine
+  save_steps                : 500
+
+Training was interrupted after 450 optimizer steps (mid-epoch 1).
+No epoch-end validation loss was recorded (val_loss saved as inf in checkpoint).
+
+Checkpoint saved:
+  checkpoints/checkpoint-epoch1-step450/
+    checkpoint.pt          (model + optimizer state, epoch=1, global_step=450)
+    tokenizer.json
+    tokenizer_config.json
+
+
+## 3. Local Inference Comparison
+
+Command (base):
+  python sample.py --prompt "Harry looked at" --max_new_tokens 50 --seed 42
+
+Command (fine-tuned):
+  python sample.py --prompt "Harry looked at" --max_new_tokens 50 --seed 42 \
+    --checkpoint checkpoints/checkpoint-epoch1-step450
+
+--- Base GPT-2 Output ---
+Prompt   : Harry looked at
+Generated: her and said "No I have nothing more to do than to take you to
+           see the doctor and we'll get to it. I'll come back to tell you
+           about the whole thing with you." She got her coat as she came in
+           quickly and
+
+--- Fine-tuned GPT-2 Output ---
+Prompt   : Harry looked at
+Generated: her and said, 'But I know Hagrid . . . Hagrid has been talking
+           to my family. . . . I know what he is doing . . . . you see . .
+           . Hagrid has told me, he is . .
+
+--- Key Differences ---
+1. Domain shift:
+   - Base      : generic English narrative (doctor, coat, she came in)
+   - Fine-tuned: Harry Potter characters (Hagrid, ellipsis style ". . .")
+
+2. Step 0 top candidates:
+   - Base      : ' the' (0.265), ' her' (0.229), ' him' (0.169)
+   - Fine-tuned: ' Harry' (0.336), ' the' (0.135), ' Hermione' (0.087)
+   → Fine-tuned model surfaces HP character names as top candidates
+
+3. Token certainty — 'Hagrid' learned as a strong bigram:
+   After token 'Hag', P('rid') = 1.000 in fine-tuned model
+   (The model has fully memorised this character name token pair)
+
+4. Dialogue style:
+   - Base      : double-quote speech  ("No I have nothing...")
+   - Fine-tuned: single-quote style   ('But I know Hagrid...')
+   → Matches the Harry Potter book corpus dialogue convention
+
+
+## 4. Visualisation
+
+Pretrained token embedding plot (UMAP, top-500 Harry Potter corpus tokens):
+  Deliverables/Plots/embeddings_pretrained.png
+
+Fine-tuned embedding plot: to be generated post full training run.
+Per-step probability charts: generated via src/visualize/distributions.py

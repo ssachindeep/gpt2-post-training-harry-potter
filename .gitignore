@@ -1,0 +1,52 @@
+# macOS / editor noise
+.DS_Store
+.vscode/
+.idea/
+
+# Local agent/session state
+.claude/
+
+# Python caches and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and secrets
+.env
+.env.*
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Dataset/cache outputs
+data/cache/
+data/raw/
+data/processed/
+
+# Training artifacts and large model files
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# Generated local outputs outside Deliverables
+logs/
+runs/
+wandb/
+visualization/
+
+# Archives created for Kaggle or submission
+*.zip
+*.tar
+*.tar.gz

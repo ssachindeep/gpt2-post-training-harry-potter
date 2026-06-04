@@ -1,0 +1,13 @@
+torch
+transformers
+datasets
+tokenizers
+pyyaml
+tqdm
+numpy
+matplotlib
+scikit-learn
+umap-learn
+pillow
+imageio
+streamlit
