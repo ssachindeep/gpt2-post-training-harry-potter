@@ -1,92 +1,54 @@
-GPT-2 Harry Potter Post-Training — Session Evidence
-=====================================================
+❯ /export sachindeeps.txt                                                                               
+  ⎿  Conversation exported to:
+     /Users/ssachindeep/code/IISc/DeepLearning/GPT2/gpt2-post-training-ssachindeep/sachindeeps.txt
 
-## 1. Dry Run (Local CPU)
+※ recap: Built a full GPT-2 Harry Potter fine-tuning pipeline including training, inference,
+  visualization, Streamlit app, and all deliverables. Everything is complete — the only remaining item
+  is for you to write Reflection.md in your own words.
 
-Command:
-  python train.py --config config/default.yaml --dry-run
+❯ /usage 
+  ⎿  Settings dialog dismissed
 
-Output:
-  Step 1-2 : Train samples loaded    : 81,349
-  Step 3-4 : Batch input_ids shape   : torch.Size([8, 512])
-  Step 5-6 : Token embeddings shape  : torch.Size([8, 512, 768])
-  Step 7-8 : Logits shape            : torch.Size([8, 512, 50257])
-  Step 9   : Probabilities shape     : torch.Size([8, 512, 50257])
-  Step 10  : Cross-entropy loss      : 9.3883
+❯ /usage                                                                                                
 
-  (Loss ~9.39 is expected for an untrained model on a 50,257-token vocab:
-   ln(50257) ≈ 10.82; GPT-2 pretrained weights reduce this to ~9.4)
+────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Settings  Status   Config   Usage   Stats
 
-  Dry Run Complete: Pipeline OK
+  Session
 
+  Total cost:            $5.75
+  Total duration (API):  17m 3s
+  Total duration (wall): 4h 44m 18s
+  Total code changes:    1271 lines added, 35 lines removed
+  Usage by model:
+     claude-sonnet-4-6:  9.4k input, 41.0k output, 14.4m cache read, 212.8k cache write ($5.75)
+      claude-haiku-4-5:  698 input, 18 output, 0 cache read, 0 cache write ($0.0008)
 
-## 2. Kaggle GPU Training
+  What's contributing to your limits usage?
+  Approximate, based on local sessions on this machine — does not include other devices or claude.ai
 
-Platform  : Kaggle (GPU T4 x2)
-Config    : config/default.yaml
-  epochs                    : 3
-  batch_size                : 8
-  gradient_accumulation     : 4  (effective batch = 32)
-  learning_rate             : 5e-5
-  lr_scheduler              : cosine
-  save_steps                : 500
+  Last 24h · these are independent characteristics of your usage, not a breakdown
 
-Training was interrupted after 450 optimizer steps (mid-epoch 1).
-No epoch-end validation loss was recorded (val_loss saved as inf in checkpoint).
+  63% of your usage came from subagent-heavy sessions
+   Each subagent runs its own requests. Be deliberate about spawning them — and
+   consider configuring a cheaper model for simpler subagents.
 
-Checkpoint saved:
-  checkpoints/checkpoint-epoch1-step450/
-    checkpoint.pt          (model + optimizer state, epoch=1, global_step=450)
-    tokenizer.json
-    tokenizer_config.json
+  63% of your usage came from sessions active for 8+ hours
+   These are often background/loop sessions. Continuous usage can add up quickly
+   so make sure it is intentional.
 
+  20% of your usage was at >150k context
+   Longer sessions are more expensive even when cached. /compact mid-task, /clear
+   when switching to new tasks.
 
-## 3. Local Inference Comparison
+  Skills                  % of usage
+  /code-review                    5%
+  /run                            3%
+  /init                           3%
 
-Command (base):
-  python sample.py --prompt "Harry looked at" --max_new_tokens 50 --seed 42
+  Subagents               % of usage
+  code-review                     2%
 
-Command (fine-tuned):
-  python sample.py --prompt "Harry looked at" --max_new_tokens 50 --seed 42 \
-    --checkpoint checkpoints/checkpoint-epoch1-step450
+  d to day · w to week
 
---- Base GPT-2 Output ---
-Prompt   : Harry looked at
-Generated: her and said "No I have nothing more to do than to take you to
-           see the doctor and we'll get to it. I'll come back to tell you
-           about the whole thing with you." She got her coat as she came in
-           quickly and
-
---- Fine-tuned GPT-2 Output ---
-Prompt   : Harry looked at
-Generated: her and said, 'But I know Hagrid . . . Hagrid has been talking
-           to my family. . . . I know what he is doing . . . . you see . .
-           . Hagrid has told me, he is . .
-
---- Key Differences ---
-1. Domain shift:
-   - Base      : generic English narrative (doctor, coat, she came in)
-   - Fine-tuned: Harry Potter characters (Hagrid, ellipsis style ". . .")
-
-2. Step 0 top candidates:
-   - Base      : ' the' (0.265), ' her' (0.229), ' him' (0.169)
-   - Fine-tuned: ' Harry' (0.336), ' the' (0.135), ' Hermione' (0.087)
-   → Fine-tuned model surfaces HP character names as top candidates
-
-3. Token certainty — 'Hagrid' learned as a strong bigram:
-   After token 'Hag', P('rid') = 1.000 in fine-tuned model
-   (The model has fully memorised this character name token pair)
-
-4. Dialogue style:
-   - Base      : double-quote speech  ("No I have nothing...")
-   - Fine-tuned: single-quote style   ('But I know Hagrid...')
-   → Matches the Harry Potter book corpus dialogue convention
-
-
-## 4. Visualisation
-
-Pretrained token embedding plot (UMAP, top-500 Harry Potter corpus tokens):
-  Deliverables/Plots/embeddings_pretrained.png
-
-Fine-tuned embedding plot: to be generated post full training run.
-Per-step probability charts: generated via src/visualize/distributions.py
+  Esc to cancel
