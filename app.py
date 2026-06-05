@@ -1,3 +1,6 @@
+import base64
+from pathlib import Path
+
 import torch
 import streamlit as st
 import matplotlib.pyplot as plt
@@ -9,6 +12,7 @@ from src.utils.checkpoint import load_checkpoint
 from src.utils.generate import generate, StepRecord
 
 CFG_PATH = "config/default.yaml"
+DEFAULT_AUDIO_PATH = "assets/background.mp3"
 
 
 @st.cache_resource
@@ -59,6 +63,23 @@ def run_generation(model, tokenizer, cfg, prompt, max_new_tokens, temperature, t
     )
 
 
+def render_looping_audio(audio_path: str):
+    path = Path(audio_path)
+    if not path.exists():
+        st.sidebar.warning(f"Audio file not found: {audio_path}")
+        return
+
+    encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
+    st.sidebar.markdown(
+        f"""
+        <audio controls autoplay loop style="width: 100%;">
+            <source src="data:audio/mpeg;base64,{encoded}" type="audio/mpeg">
+        </audio>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 st.title("GPT-2 Harry Potter — Inference App")
 
 cfg, tokenizer, base_model = load_base_model()
@@ -66,6 +87,12 @@ cfg, tokenizer, base_model = load_base_model()
 # Sidebar — checkpoint + sampling controls
 st.sidebar.header("Model")
 ckpt_path = st.sidebar.text_input("Fine-tuned checkpoint dir (optional)", value="")
+
+st.sidebar.header("Background Music")
+play_music = st.sidebar.checkbox("Play looping background music", value=False)
+audio_path = st.sidebar.text_input("Audio file path", value=DEFAULT_AUDIO_PATH)
+if play_music:
+    render_looping_audio(audio_path)
 
 st.sidebar.header("Sampling Controls")
 prompt = st.sidebar.text_area("Prompt", value="Harry looked at")

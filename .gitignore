@@ -35,6 +35,7 @@ data/raw/
 data/processed/
 
 # Training artifacts and large model files
+checkpoints/
 *.pt
 *.pth
 *.bin
